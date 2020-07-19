@@ -11,82 +11,86 @@ var generateBtn = document.querySelector("#generate");
 function generatePassword() {
 
   //Initialize an empty array for the newPassword being generated.
-  var newPassword = [];
-
   //Ask the user for the password length.
+  var newPassword = [];
   var passwordLength = prompt("How many characters are needed for the password? (Min 8, Max 128)");
 
   //Validates that the user has chosen a passwordLength within the allowable range.
   while (passwordLength < 8 || passwordLength > 128) {
-
-    //Let the user know their submission was outside of the acceptable range.
+    //Let the user know their submission was outside of the acceptable range & prompt again.
     alert("Character length must be between 8 and 128.");
-
-    //Prompt them to enter a new submission for the character length
     passwordLength = prompt("How many characters are needed for the password? (Min 8, Max 128)");
- 
   }
   
   //Initialize an empty array for the possible character arrays based on the user's response.
   var characterTypeArray = [];
 
-  //Confirm which characterTypes will be needed in the password.
+  //Confirm which character types will be needed in the password. 
+  //Push 1 character from the respective character type array to the newPassword array.
+  //Add the respective character type array to characterTypeArray.
   var confirmLowerCase = confirm("Do you need at least one lower case character?");
-    if (confirmLowerCase) {
+    if (confirmLowerCase) {      
+      //Select a random character from the lowercaseLetters array and push it to the newPassword array.
+      var randomLower = lowercaseLetters[Math.floor(Math.random() * lowercaseLetters.length)];
+      newPassword.push(randomLower);
       //Add lowercaseLetters array to the characterTypeArray
       characterTypeArray.push(lowercaseLetters);
     }
+
   var confirmUpperCase = confirm("Do you need at least one upper case character?");
-  if (confirmUpperCase) {
-      //Add uppercaseLetters array to the characterTypeArray
+    if (confirmUpperCase) {
+      var randomUpper = uppercaseLetters[Math.floor(Math.random() * uppercaseLetters.length)];
+      newPassword.push(randomUpper);
       characterTypeArray.push(uppercaseLetters);
-  }
+    }
+
   var confirmNumericals = confirm("Do you need at least one numerical character?");
-  if (confirmNumericals) {
-      //Add numericals array to the characterTypeArray
+    if (confirmNumericals) {
+      var randomNumerical = numericals[Math.floor(Math.random() * numericals.length)];
+      newPassword.push(randomNumerical);
       characterTypeArray.push(numericals);
-  }
+    }
+
   var confirmSpecial = confirm("Do you need at least one special character?");
-  if (confirmSpecial) {
-      //Add specialCharacters array to the characterTypeArray
+    if (confirmSpecial) {
+      var randomSpecial = specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+      newPassword.push(randomSpecial);
       characterTypeArray.push(specialCharacters);
-  }
+    }
 
-//Now characterTypeArray only includes the arrays that the user has selected from the confirms.
+    //newPassword array has at least one character from each of the selected character types.
+    //characterTypeArray only includes the arrays that the user has selected from the confirms.
 
-//Loop once for the generation of each character up to the exact character length chosen by the user.
-for (var i = 0 ; i < passwordLength; i++) {
+    //remainingCharacters capture the number of loops needed in the following for loop.
+    //var remainingCharacters = passwordLength - newPassword.length
 
-//Selects one random characterTypeArray from a list of the arrays chosen by the user.
-var randomCharacterTypeArray = characterTypeArray[Math.floor(Math.random() * characterTypeArray.length)];
+    //Fill in the remaining characters for the password by randomly choosing from the arrays 
+    //within characterTypeArray and then randomly choosing within that particular array.
+    //Loop once for the generation of each character up to the exact character length chosen by the user.
+    for (var i = newPassword.length; i < passwordLength; i++) {
 
-//Selects one random character from the randomly chosen array.
-var randomCharacter = randomCharacterTypeArray[Math.floor(Math.random() * randomCharacterTypeArray.length)];
+    //Select one random array within characterTypeArray and then one random character from that array.
+    //Push random character to the end of the newPassword array.
+    var randomCharacterTypeArray = characterTypeArray[Math.floor(Math.random() * characterTypeArray.length)];
+    var randomCharacter = randomCharacterTypeArray[Math.floor(Math.random() * randomCharacterTypeArray.length)];
+    newPassword.push(randomCharacter);
 
-//Push random character to the end of the newPassword array.
-newPassword.push(randomCharacter);
+    //Repeat this loop until the length of the newPassword array matches the user's specifications stored in passwordLength.
+    }
 
-//Repeat this loop until the length of the newPassword array matches the user's specifications stored in passwordLength.
-
-//How do I make sure that each array within characterTypeArray has had an element selected from it at least once but also not limited to once?
-}
+//Shuffle the characters within the newPassword array to avoid formulaic passwords.
+newPassword = newPassword.sort(() => Math.random() - 0.5)
 
 //Convert the newPassword array into a text string to assign to var password.
   var password = newPassword.join().replace(/,/g,"");
-
-  
-
   return password;
-
 }
 
 // Write password to the #password input
 function writePassword() {
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
-
   passwordText.value = password;
-
 }
 
 // Add event listener to generate button
